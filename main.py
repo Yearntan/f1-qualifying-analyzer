@@ -97,20 +97,29 @@ def main() -> int:
 
     # return 0
 
-    if args.list_drivers:
-        print("Available drivers:")
-        print(", ".join(list_drivers(laps)))
-        return 0
 
-    if args.classification:
-        print("Final qualifying classification")
-        for entry in build_classification(laps):
-            print(
-                f"P{entry['position']:>2}  {entry['driver']:<3}  "
-                f"{format_lap_time(entry['time_seconds'])}  "
-                f"({entry['session']})"
-            )
-        return 0
+    # with open("data/session_laptimes.json", "r", encoding="utf-8") as f:
+    #     data = json.load(f)
+
+    # for field in ["pos", "iacc"]:
+    #     values = data.get(field)
+
+    #     print(f"\n{field}:")
+    #     if values is None:
+    #         print("Field not found")
+    #     else:
+    #         print("First 20 values:", values[:20])
+    #         print("Unique values:", sorted(set(values)))
+
+    # if args.classification:
+    #     print("Final qualifying classification")
+    #     for entry in build_classification(laps):
+    #         print(
+    #             f"P{entry['position']:>2}  {entry['driver']:<3}  "
+    #             f"{format_lap_time(entry['time_seconds'])}  "
+    #             f"({entry['session']})"
+    #         )
+    #     return 0
 
     # Explicit --driver is a one-shot lookup (handy for scripting/piping).
     if args.driver:

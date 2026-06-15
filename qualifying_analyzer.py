@@ -176,7 +176,7 @@ def analyse_driver(laps: Iterable[Lap], driver: str) -> DriverResult:
         classified_time_seconds=classified_time,
     )
 
-
+# Lap obj -> Dictionaries list
 def build_classification(laps: Iterable[Lap]) -> list[dict[str, Any]]:
     """Build the final classification using the FIA qualifying knock-out logic.
 
@@ -198,22 +198,26 @@ def build_classification(laps: Iterable[Lap]) -> list[dict[str, Any]]:
     lap_list = list(laps)
     entries: list[tuple[str, float | None, str]] = []
 
+    # Driver lists
     for driver in list_drivers(lap_list):
         driver_laps = [lap for lap in lap_list if lap.driver == driver]
+        # Furthest sessions driver is in
         final_session = _furthest_session(driver_laps)
         if final_session is None:
             continue
+        # Find fastest lap in final session
         best = _best_lap_for_session(lap_list, driver, final_session)
+        # none if all laps were invalid
         best_time = best.lap_time_seconds if best is not None else None
         entries.append((final_session, best_time, driver))
 
     precedence = {session: i for i, session in enumerate(SESSION_PRECEDENCE)}
     entries.sort(
         key=lambda item: (
-            precedence[item[0]],                       # later session ranks higher
-            item[1] is None,                           # no valid time sorts last in group
-            item[1] if item[1] is not None else 0.0,   # then fastest first
-            item[2],                                   # alphabetical tie-break
+            precedence[item[0]],                       # later session ranks higher - final session
+            item[1] is None,                           # no valid time sorts last in group 
+            item[1] if item[1] is not None else 0.0,   # then fastest first -  best time
+            item[2],                                   # alphabetical tie-break -driver - an assumption, alphabetical
         )
     )
 

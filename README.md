@@ -13,12 +13,13 @@ I chose Python because it is quick to run, easy for an interviewer to inspect, a
 
 ```text
 .
-├── main.py                          # Console entry point (CLI only)
-├── qualifying_analyzer.py           # Core parsing, validation and analysis logic
-├── test_qualifying_analyzer.py      # Automated tests (pytest)
+├── main.py
+├── qualifying_analyzer.py
+├── test_qualifying_analyzer.py
+├── check_sessions.py                # Helper script to inspect session participation counts
 ├── data/
-│   └── session_laptimes.json        # Dataset used by the app
-├── THIRD_PARTY_NOTICES.md           # Dataset attribution
+│   └── session_laptimes.json
+├── THIRD_PARTY_NOTICES.md
 └── README.md
 ```
 
@@ -98,6 +99,16 @@ Print the whole classification:
 
 ```bash
 python main.py --classification
+```
+
+## Dataset verification helper
+
+I also included `check_sessions.py`, a small helper script used to inspect the number of unique drivers appearing in each qualifying session.
+
+Run it from the project root:
+
+```bash
+python check_sessions.py
 ```
 
 ## Approach and architecture

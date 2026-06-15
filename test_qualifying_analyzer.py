@@ -13,7 +13,7 @@ from qualifying_analyzer import (
 
 DATA_FILE = Path(__file__).resolve().parent / "data" / "session_laptimes.json"
 
-
+# Temp json for tests
 def _write(tmp_path, payload):
     path = tmp_path / "fixture.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
@@ -27,7 +27,7 @@ def test_format_lap_time():
 
 def test_hul_result_from_provided_dataset():
     laps = load_laps(DATA_FILE)
-    result = analyse_driver(laps, "hul")
+    result = analyse_driver(laps, "hul") # Check if it converts to UC
 
     assert result.driver == "HUL"
     assert result.session_bests["Q1"].lap_time_seconds == pytest.approx(81.024)
@@ -46,7 +46,7 @@ def test_bor_result_from_provided_dataset():
     assert result.session_bests["Q3"] is None
     assert result.qualifying_position == 10
 
-
+# test knock-out logic
 def test_classification_uses_fia_knockout_on_real_data():
     laps = load_laps(DATA_FILE)
     classification = build_classification(laps)
@@ -134,7 +134,7 @@ def test_unknown_driver_raises_value_error():
     with pytest.raises(ValueError):
         analyse_driver(laps, "ZZZ")
 
-
+# monkeypatch - fake user input, capsys to capture terminal messages
 def test_interactive_loop_retries_after_bad_code(monkeypatch, capsys):
     """A wrong code should not exit: the loop reports it and keeps prompting."""
     import main as cli
@@ -145,7 +145,7 @@ def test_interactive_loop_retries_after_bad_code(monkeypatch, capsys):
     monkeypatch.setattr("builtins.input", lambda *args, **kwargs: next(inputs))
 
     rc = cli.run_interactive(laps)
-    out = capsys.readouterr().out
+    out = capsys.readouterr().out # Captures everything printed to terminal
 
     assert rc == 0
     assert "Unknown driver code 'ZZZ'" in out   # the bad code was reported...

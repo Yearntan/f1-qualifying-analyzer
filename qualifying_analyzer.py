@@ -27,7 +27,7 @@ REQUIRED_FIELDS = ("drv", "time", "qs")
 class DatasetError(Exception):
     """Raised when the input file cannot be read or has an unsupported shape."""
 
-# Read-only lap data
+# Read-only lap data, Lap object & rule to decide whether lap is valid
 @dataclass(frozen=True)
 class Lap:
     driver: str
@@ -91,22 +91,22 @@ def _normalise_to_rows(raw: Any) -> list[dict[str, Any]]:
 
     if not isinstance(raw, dict):
         raise DatasetError("JSON must be either an object of columns or a list of rows.")
+    
     # Require drv, time & qs
-
     missing = [field for field in REQUIRED_FIELDS if field not in raw]
     if missing:
         raise DatasetError(f"Dataset is missing required field(s): {', '.join(missing)}")
+    
     # Ensure all fields are lists
-
-    lengths = {key: len(value) for key, value in raw.items() if isinstance(value, list)}
+    lengths = {key: len(value) for key, value in raw.items() if isinstance(value, list)} #Create dic of column lengths
     if len(lengths) != len(raw):
         non_lists = [key for key, value in raw.items() if not isinstance(value, list)]
         raise DatasetError(f"All column values must be lists. Non-list field(s): {', '.join(non_lists)}")
 
     if not lengths:
         return []
+    
     # All columns have same length
-
     expected = next(iter(lengths.values()))
     mismatched = {key: length for key, length in lengths.items() if length != expected}
     if mismatched:
@@ -116,9 +116,8 @@ def _normalise_to_rows(raw: Any) -> list[dict[str, Any]]:
     return [{key: raw[key][i] for key in raw} for i in range(expected)]
 
 # Convert one raw row into clean Lap
-
 def _row_to_lap(row: dict[str, Any], index: int) -> Lap:
-    driver = _clean_string(row.get("drv"))
+    driver = _clean_string(row.get("drv")) # Remove messy values
     session = _clean_string(row.get("qs"))
 
     if not driver:
@@ -135,7 +134,6 @@ def _row_to_lap(row: dict[str, Any], index: int) -> Lap:
     )
 
 # Driver lists
-
 def list_drivers(laps: Iterable[Lap]) -> list[str]:
     return sorted({lap.driver for lap in laps})
 
@@ -145,14 +143,14 @@ def analyse_driver(laps: Iterable[Lap], driver: str) -> DriverResult:
     normalised_driver = _normalise_driver_input(driver)
     lap_list = list(laps)
     drivers = list_drivers(lap_list)
-    # Unknown driver handler
 
+    # Unknown driver handler
     if normalised_driver not in drivers:
         raise ValueError(
             f"Unknown driver code '{normalised_driver}'. Available drivers: {', '.join(drivers)}"
         )
+    
     # Best lap in each session
-
     session_bests = {
         session: _best_lap_for_session(lap_list, normalised_driver, session)
         for session in SESSIONS

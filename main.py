@@ -111,15 +111,15 @@ def main() -> int:
     #         print("First 20 values:", values[:20])
     #         print("Unique values:", sorted(set(values)))
 
-    # if args.classification:
-    #     print("Final qualifying classification")
-    #     for entry in build_classification(laps):
-    #         print(
-    #             f"P{entry['position']:>2}  {entry['driver']:<3}  "
-    #             f"{format_lap_time(entry['time_seconds'])}  "
-    #             f"({entry['session']})"
-    #         )
-    #     return 0
+    if args.classification:
+        print("Final qualifying classification")
+        for entry in build_classification(laps):
+            print(
+                f"P{entry['position']:>2}  {entry['driver']:<3}  "
+                f"{format_lap_time(entry['time_seconds'])}  "
+                f"({entry['session']})"
+            )
+        return 0
 
     # Explicit --driver is a one-shot lookup (handy for scripting/piping).
     if args.driver:

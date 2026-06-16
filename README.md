@@ -181,4 +181,4 @@ I used AI assistance to help structure the solution, identify edge cases, and dr
 - Add in-app data visualisation.
 - Cross-check the derived bests against the `pb` flag as a data-quality report.
 - Explicitly classify and optionally exclude in-/out-laps using the `pin`/`pout` fields.
-- Add type checking with `mypy`, linting with `ruff`, and a CI workflow.
+
